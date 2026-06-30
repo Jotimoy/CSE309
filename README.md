@@ -23,3 +23,5 @@ This repository includes a starter frontend and backend setup for the assessment
 - Start server: uvicorn main:app --reload --host 127.0.0.1 --port 8000
 - Health endpoint: http://127.0.0.1:8000/health
 - Backend environment config: copy backend/.env.example to backend/.env and adjust CORS settings if needed.
+
+Submission PR for CSE309 assessment.
