@@ -8,6 +8,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .routers import health_router
+from app.routers.auth_router import router as auth_router
+from app.routers.user_router import router as user_router
+from app.services.database import initialize_database
 
 load_dotenv()
 
@@ -18,6 +21,7 @@ logger = logging.getLogger("smart_todo")
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     logger.info("Starting Smart Todo API")
+    initialize_database()
     yield
     logger.info("Shutting down Smart Todo API")
 
@@ -49,3 +53,5 @@ async def log_requests(request: Request, call_next):
 
 
 app.include_router(health_router.router)
+app.include_router(auth_router)
+app.include_router(user_router)

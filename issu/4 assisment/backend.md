@@ -11,8 +11,11 @@ Add authentication and authorization flow to support secure user access and prot
 - Add role-based or permission-based access checks if needed.
 
 ## Tasks
-- [ ] Create user model and authentication schema.
-- [ ] Add registration endpoint.
-- [ ] Add login endpoint.
-- [ ] Implement token generation and validation.
-- [ ] Secure protected API routes with authentication checks.
+- [x] Create user model and authentication schema.
+- [x] Add registration endpoint.
+- [x] Add login endpoint.
+- [x] Implement token generation and validation.
+- [x] Secure protected API routes with authentication checks.
+
+## Status
+The backend authentication flow is implemented with secure password hashing, token-based session storage, and protected user routes.
