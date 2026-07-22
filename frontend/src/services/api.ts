@@ -1,4 +1,4 @@
-import type { TodoItem } from '../types';
+import type { AuthResponse, LoginCredentials, RegisterCredentials, TodoItem } from '../types';
 
 export const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -29,4 +29,36 @@ export async function fetchTasks(): Promise<TodoItem[]> {
   } catch {
     return fallbackTasks;
   }
+}
+
+export async function loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
+  const response = await fetch(`${apiBaseUrl}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  });
+
+  if (!response.ok) {
+    throw new Error('Login failed');
+  }
+
+  return (await response.json()) as AuthResponse;
+}
+
+export async function registerUser(credentials: RegisterCredentials): Promise<AuthResponse> {
+  const response = await fetch(`${apiBaseUrl}/auth/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  });
+
+  if (!response.ok) {
+    throw new Error('Registration failed');
+  }
+
+  return (await response.json()) as AuthResponse;
 }
