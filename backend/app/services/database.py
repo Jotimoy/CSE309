@@ -2,7 +2,7 @@ import os
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(os.getenv('DB_PATH', Path(__file__).parent.parent.parent / 'smart_todo.db')).resolve()
+DB_PATH = Path(os.getenv('DB_PATH', Path(__file__).parent.parent.parent / 'warehouse.db')).resolve()
 
 def get_connection() -> sqlite3.Connection:
     connection = sqlite3.connect(DB_PATH, check_same_thread=False)

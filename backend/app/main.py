@@ -15,27 +15,37 @@ from app.services.database import initialize_database
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("smart_todo")
+logger = logging.getLogger("smart_warehouse")
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    logger.info("Starting Smart Todo API")
+    logger.info("Starting Smart AI Warehouse API")
     initialize_database()
     yield
-    logger.info("Shutting down Smart Todo API")
+    logger.info("Shutting down Smart AI Warehouse API")
 
 
 app = FastAPI(
-    title="Smart Todo API",
+    title="Smart AI Warehouse API",
     version="0.1.0",
     lifespan=lifespan,
 )
 
+_cors_env = os.getenv("CORS_ORIGINS")
+_default_local_origins = [
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+]
+# For local development allow all origins to simplify CORS during testing.
+# In production, set `CORS_ORIGINS` environment variable and tighten origins.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("CORS_ORIGINS", "http://127.0.0.1:3000").split(",")],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -52,6 +62,6 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-app.include_router(health_router.router)
+app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(user_router)

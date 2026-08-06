@@ -1,7 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
-import TasksPage from './pages/TasksPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import RequireAuth from './components/RequireAuth';
@@ -11,12 +10,11 @@ function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<HomePage />} />
           <Route
-            path="/tasks"
+            path="/"
             element={
               <RequireAuth>
-                <TasksPage />
+                <HomePage />
               </RequireAuth>
             }
           />

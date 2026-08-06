@@ -37,9 +37,9 @@ function RegisterPage() {
 
     try {
       await auth.register({ name, email, password });
-      navigate('/tasks', { replace: true });
+      navigate('/', { replace: true });
     } catch (exception) {
-      setError('Registration failed. Please try again with a different email.');
+      setError(exception instanceof Error ? exception.message : 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

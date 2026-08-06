@@ -1,10 +1,3 @@
-export interface TodoItem {
-  id: string;
-  title: string;
-  done: boolean;
-  createdAt: string;
-}
-
 export interface User {
   id: string;
   name: string;
