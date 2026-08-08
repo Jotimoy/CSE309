@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 
 from app.models.user import AuthResponse, UserCreate, UserLogin, UserResponse
@@ -12,7 +14,7 @@ from app.services.auth_service import (
 router = APIRouter(prefix='/auth', tags=['Authentication'])
 
 
-def _get_bearer_token(authorization: str | None = Header(None)) -> str:
+def _get_bearer_token(authorization: Optional[str] = Header(None)) -> str:
     if authorization is None or not authorization.startswith('Bearer '):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

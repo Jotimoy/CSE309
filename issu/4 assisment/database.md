@@ -11,8 +11,11 @@ Define database models and integrate them with the backend for user authenticati
 - Support user lookup by email or username during login.
 
 ## Tasks
-- [ ] Define user database model.
-- [ ] Configure database connection.
-- [ ] Add persistence logic for user creation.
-- [ ] Add user lookup queries for authentication.
-- [ ] Ensure secure password storage and retrieval.
+- [x] Define user database model.
+- [x] Configure database connection.
+- [x] Add persistence logic for user creation.
+- [x] Add user lookup queries for authentication.
+- [x] Ensure secure password storage and retrieval.
+
+## Status
+The user database model and integration are implemented using SQLite with a dedicated `database.py` service. User creation, lookup, and secure password hashing are fully supported by the backend auth flow.

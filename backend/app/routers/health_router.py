@@ -11,4 +11,4 @@ def health() -> JSONResponse:
 
 @router.get("/")
 def root() -> JSONResponse:
-    return JSONResponse({"status": "ok", "message": "Smart Todo API is running."})
+    return JSONResponse({"status": "ok", "message": "Smart AI Warehouse API is running."})
