@@ -1,11 +1,26 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 function Layout({ children }: LayoutProps) {
+  const auth = (() => {
+    try {
+      return useAuth();
+    } catch {
+      return null;
+    }
+  })();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    auth?.logout();
+    navigate('/login');
+  };
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -14,24 +29,29 @@ function Layout({ children }: LayoutProps) {
           <p>Warehouse management UI built with React, TypeScript, and routing.</p>
         </div>
         <nav className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+          {auth && auth.isAuthenticated ? (
+            <>
+              <Link to="/">Dashboard</Link>
+              <Link to="/inventory">Inventory</Link>
+              <Link to="/alerts">Alerts</Link>
+              <button className="button-link" onClick={handleLogout}>
+                Logout
+              </button>
+              <span className="muted">{auth.user?.name}</span>
+            </>
+          ) : (
+            <>
+              <Link to="/">Home</Link>
+              <Link to="/login">Login</Link>
+              <Link to="/register">Register</Link>
+            </>
+          )}
         </nav>
       </header>
 
       <main className="content">{children}</main>
 
-      <footer className="site-footer">
-        <div>
-          <p>© 2026 Smart AI Warehouse. All rights reserved.</p>
-        </div>
-        <div className="footer-links">
-          <a href="/">Home</a>
-          <a href="/login">Login</a>
-          <a href="/register">Register</a>
-        </div>
-      </footer>
+      {/* Footer removed per user request */}
     </div>
   );
 }

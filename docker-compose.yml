@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - '8000:8000'
+    environment:
+      - DB_PATH=/data/warehouse.db
+      - ALERT_SCAN_INTERVAL_SECONDS=60
+      - ALERT_WEBHOOK_URL=
+    volumes:
+      - backend-data:/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - '5173:5173'
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+
+volumes:
+  backend-data:
+
