@@ -32,5 +32,3 @@ def test_inventory_flow():
     adj_res = client.post('/inventory/stock/adjust', json={'item_id': item['id'], 'to_location': loc['id'], 'quantity': -3, 'reason': 'test'})
     assert adj_res.status_code == 200
     assert adj_res.json()['quantity'] == 2
-
-*** End Patch

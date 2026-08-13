@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { listItems, createItem, listLocations, createLocation, setStock, deleteItem } from '../services/api';
 import type { Item, Location } from '../types';
 import { Link } from 'react-router-dom';
+import { ItemIcon, LocationIcon } from '../components/Icons';
 
 function InventoryList() {
   const [items, setItems] = useState<Item[]>([]);
@@ -108,14 +109,18 @@ function InventoryList() {
   };
 
   return (
-    <section className="card">
-      <h2>Inventory</h2>
-      <p>Items registered in the warehouse.</p>
-
-      <div style={{ marginBottom: 12 }}>
-        <button className="button-link" onClick={() => setShowForm((s) => !s)}>
-          {showForm ? 'Cancel' : 'Add item'}
-        </button>
+    <section className="dashboard-page">
+      <div className="dashboard-hero card">
+        <div>
+          <p className="eyebrow">Inventory</p>
+          <h2>Items</h2>
+          <p className="panel-copy">Manage items, stock and locations.</p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <button className="button-link" onClick={() => setShowForm((s) => !s)}>
+            {showForm ? 'Cancel' : 'Add item'}
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -201,8 +206,16 @@ function InventoryList() {
         <ul className="inventory-list">
           {items.map((it) => (
             <li key={it.id} className="inventory-item">
-              <strong>{it.name}</strong> <small>({it.sku})</small>
-              <div>
+              <div className="icon-square">
+                <ItemIcon />
+              </div>
+
+              <div className="inventory-meta">
+                <strong>{it.name}</strong>
+                <div style={{ color: '#64748b', fontSize: '0.92rem' }}>{it.sku}</div>
+              </div>
+
+              <div className="actions">
                 <Link to={`/items/${it.id}`} className="button-link">View</Link>
                 <Link to={`/items/${it.id}`} className="button-link">Edit</Link>
                 <button

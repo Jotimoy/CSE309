@@ -27,7 +27,7 @@ function LoginPage() {
       await auth.login({ email, password });
       navigate(from, { replace: true });
     } catch (exception) {
-      setError('Login failed. Please check your credentials and try again.');
+      setError(exception instanceof Error ? exception.message : 'Login failed. Please check your credentials and try again.');
     } finally {
       setIsLoading(false);
     }

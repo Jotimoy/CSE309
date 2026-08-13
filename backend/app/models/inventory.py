@@ -46,10 +46,10 @@ class StockResponse(BaseModel):
 
 class StockMovementCreate(BaseModel):
     item_id: int
-    from_location: Optional[int]
-    to_location: Optional[int]
+    from_location: Optional[int] = None
+    to_location: Optional[int] = None
     quantity: int
-    reason: Optional[str]
+    reason: Optional[str] = None
 
 
 class StockMovementResponse(BaseModel):
