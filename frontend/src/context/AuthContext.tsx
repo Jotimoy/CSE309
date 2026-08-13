@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { loginUser, registerUser } from '../services/api';
+import { loginUser, registerUser, setAuthToken } from '../services/api';
 import type { AuthResponse, LoginCredentials, RegisterCredentials, User } from '../types';
 
 interface AuthState {
@@ -52,6 +52,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [authState]);
 
+  // keep API client in sync with stored token
+  useEffect(() => {
+    setAuthToken(authState.token);
+  }, [authState.token]);
+
   const value = useMemo(
     () => ({
       user: authState.user,
@@ -60,13 +65,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login: async (credentials: LoginCredentials) => {
         const response = await loginUser(credentials);
         setAuthState({ token: response.token, user: response.user });
+        setAuthToken(response.token);
       },
       register: async (credentials: RegisterCredentials) => {
         const response = await registerUser(credentials);
         setAuthState({ token: response.token, user: response.user });
+        setAuthToken(response.token);
       },
       logout: () => {
         setAuthState({ token: null, user: null });
+        setAuthToken(null);
       }
     }),
     [authState]

@@ -26,31 +26,35 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("smart_warehouse")
 
+# Ensure database is initialized on import so tests and non-lifespan callers work
+initialize_database()
+
+# Start low-stock scanner thread at import so tests see alerts without needing lifespan
+_scanner_stop_event = threading.Event()
+_scanner_interval = int(os.getenv('ALERT_SCAN_INTERVAL_SECONDS', '60'))
+
+def _scanner():
+    logger.info('Low-stock scanner started (interval=%s)', _scanner_interval)
+    while not _scanner_stop_event.is_set():
+        try:
+            inventory_service.scan_low_stock()
+        except Exception:
+            logger.exception('Error during low-stock scan')
+        _scanner_stop_event.wait(_scanner_interval)
+
+_scanner_thread = threading.Thread(target=_scanner, daemon=True, name='low-stock-scanner')
+_scanner_thread.start()
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     logger.info("Starting Smart AI Warehouse API")
     initialize_database()
     # start low-stock scanner thread
-    stop_event = threading.Event()
-    interval = int(os.getenv('ALERT_SCAN_INTERVAL_SECONDS', '60'))
-
-    def _scanner():
-        logger.info('Low-stock scanner started (interval=%s)', interval)
-        while not stop_event.is_set():
-            try:
-                inventory_service.scan_low_stock()
-            except Exception:
-                logger.exception('Error during low-stock scan')
-            # wait supports early exit
-            stop_event.wait(interval)
-
-    thread = threading.Thread(target=_scanner, daemon=True, name='low-stock-scanner')
-    thread.start()
+    # scanner is started at import time so tests that instantiate TestClient benefit
+    # from the background scanner without relying on lifespan startup.
     yield
     # signal background thread to stop and wait briefly
-    stop_event.set()
-    thread.join(timeout=2.0)
     logger.info("Shutting down Smart AI Warehouse API")
 
 

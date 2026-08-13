@@ -130,6 +130,12 @@ def set_stock(item_id: int, location_id: int, quantity: int) -> dict:
 
     conn.commit()
     conn.close()
+    # Trigger low-stock scan to create alerts immediately when stock changes
+    try:
+        scan_low_stock()
+    except Exception:
+        pass
+
     return {'id': stock_id, 'item_id': item_id, 'location_id': location_id, 'quantity': quantity, 'updated_at': now}
 
 
@@ -169,6 +175,12 @@ def adjust_stock(item_id: int, location_id: int, delta: int, reason: Optional[st
 
     conn.commit()
     conn.close()
+    # Trigger low-stock scan to create alerts immediately when stock changes
+    try:
+        scan_low_stock()
+    except Exception:
+        pass
+
     return {'id': stock_id, 'item_id': item_id, 'location_id': location_id, 'quantity': get_stock(item_id, location_id)['quantity'], 'updated_at': now}
 
 
@@ -253,7 +265,14 @@ def scan_low_stock(threshold: int = 10) -> List[dict]:
             'SELECT id FROM alerts WHERE item_id = ? AND location_id = ? AND type = ? AND is_resolved = 0',
             (item_id, location_id, 'low_stock'),
         )
-        if cur.fetchone():
+        existing = cur.fetchone()
+        if existing:
+            # return existing unresolved alert as part of results
+            alert_id = existing['id']
+            cur.execute('SELECT id, item_id, location_id, type, message, is_resolved, created_at FROM alerts WHERE id = ?', (alert_id,))
+            found = cur.fetchone()
+            if found:
+                created_alerts.append(dict(found))
             continue
 
         message = f'Low stock: {quantity} remaining (threshold {threshold})'
